@@ -122,7 +122,7 @@ const Hero = () => {
             className="relative overflow-hidden rounded-[2rem] shadow-2xl"
           >
             <img
-              src="public\Tasalphoto.jpeg"
+              src="\Tasalphoto.jpeg"
               alt="Professional dentist"
               className="h-[570px] w-full object-contain"
             />

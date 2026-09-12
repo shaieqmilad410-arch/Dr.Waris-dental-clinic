@@ -6,37 +6,37 @@ const testimonials = [
   {
     name: "Ahmad Seyar Hapmal",
     role: "Patient",
-    image: "public/testimonials.webp",
+    image: "/testimonials.webp",
     text: "The entire experience was excellent. The staff were friendly, professional, and made me feel comfortable throughout my treatment.",
   },
   {
     name: "Shouib Majroh",
     role: "Patient",
-    image: "public/testimonials.webp",
+    image: "/testimonials.webp",
     text: "I had a great experience at this clinic. The dentist explained everything clearly and the treatment was very comfortable.",
   },
   {
     name: "Milad Niazai",
     role: "Patient",
-    image: "/public/testimonials.webp",
+    image: "/testimonials.webp",
     text: "The clinic is clean, modern, and welcoming. I am very happy with the quality of service I received.",
   },
   {
     name: "Milad Shaieq",
     role: "Patient",
-    image: "/public/testimonials.webp",
+    image: "/testimonials.webp",
     text: "From booking the appointment to completing my treatment, everything was organized and professional.",
   },
   {
     name: "Abdul Waris",
     role: "Patient",
-    image: "/public/testimonials.webp",
+    image: "/testimonials.webp",
     text: "The team was very kind and patient. They answered all my questions and made the whole process easy.",
   },
   {
     name: "Sahil Amiri",
     role: "Patient",
-    image: "/public/testimonials.webp",
+    image: "/testimonials.webp",
     text: "I really appreciated the friendly environment and attention to detail. I would definitely recommend the clinic.",
   },
 ];

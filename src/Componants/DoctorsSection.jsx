@@ -8,21 +8,21 @@ const doctors = [
     specialty: "General Dentist",
     experience: "7+ Years Experience",
     study: "BDS & RDS (Khyber Medical University-pakistan) C-End , C-Ortho ",
-    image: "public/Tasal 3.jpg",
+    image: "/Tasal 3.jpg",
   },
   {
     name: "Dr. Yalda Hanifi",
     specialty: "Cosmetic Dentist",
     experience: "6+ Years Experience",
 
-    image: "public/femaldoc.png",
+    image: "/femaldoc.png",
     study: "MDS ( kabul Mecical University )",
   },
   {
     name: "Dr.Milad Niazai",
     specialty: "Orthodontist",
     experience: "10+ Years Experience",
-    image: "public/IMG_0170.JPG",
+    image: "/IMG_0170.JPG",
     study: "Kabul Medical University",
   },
 ];
