@@ -32,9 +32,9 @@ const AboutSection = () => {
             <div className="relative mx-auto max-w-xl">
               {/* Main image */}
               <motion.img
-                src="public\Copilot_20260911_105936.png"
+                src="public\nrew.png"
                 alt="Dentist caring for a patient"
-                className="h-[420px] w-full rounded-3xl object-cover shadow-2xl sm:h-[500px]"
+                className="h-[420px] w-full rounded-3xl  object-cover shadow-2xl sm:h-[500px]"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.4 }}
               />

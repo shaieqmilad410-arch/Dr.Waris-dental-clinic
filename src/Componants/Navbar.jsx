@@ -29,7 +29,12 @@ const Navbar = () => {
             onClick={closeMenu}
             className="group flex items-center gap-2"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500 text-white shadow-md shadow-cyan-500/20">
+            <img
+              src="public\Logophoto.jpeg"
+              className="w-20 object-cover"
+              alt="This is the logo image."
+            />
+            {/* <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500 text-white shadow-md shadow-cyan-500/20">
               <span className="text-lg font-bold">D</span>
             </div>
 
@@ -41,7 +46,7 @@ const Navbar = () => {
               <p className="hidden text-[10px] font-medium uppercase tracking-[0.2em] text-slate-400 sm:block">
                 Dental Clinic
               </p>
-            </div>
+            </div> */}
           </NavLink>
 
           {/* ================= DESKTOP NAVIGATION ================= */}

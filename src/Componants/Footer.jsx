@@ -158,11 +158,11 @@ const Footer = () => {
                   <p className="text-sm font-medium">Phone</p>
 
                   <a
-                    href="tel:+93787172152"
+                    href="tel: +93789111122"
                     className="mt-1 block text-sm text-slate-400
                     transition hover:text-cyan-400"
                   >
-                    +93 787 172 152
+                    +93 789 11 11 22
                   </a>
                 </div>
               </div>
@@ -192,7 +192,7 @@ const Footer = () => {
                   <p className="text-sm font-medium">Opening Hours</p>
 
                   <p className="mt-1 text-sm text-slate-400">
-                    Sat - Thu: 8:00 AM - 6:00 PM
+                    Sat - Thur: 8:00 AM - 9:00 PM
                   </p>
                 </div>
               </div>
@@ -209,7 +209,7 @@ const Footer = () => {
           md:flex-row lg:px-8"
         >
           <p className="text-center text-sm text-slate-500 md:text-left">
-            © {2026} SmileDental. All rights reserved.
+            © {2026} Dr.Abdul Waris All rights reserved.
           </p>
 
           <div className="flex items-center gap-5 text-sm">

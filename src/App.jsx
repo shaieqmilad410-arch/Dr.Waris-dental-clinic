@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import Navbar from "./Componants/Navbar";
 import Home from "./Pages/Home";
 import About from "./Pages/About";
-
 import Services from "./Pages/services";
 import Contact from "./Pages/Contact";
 import Hero from "./Componants/Hero";
@@ -14,10 +13,12 @@ import TestimonialsSection from "./Componants/TestimonialsSection";
 import DoctorsSection from "./Componants/DoctorsSection";
 import LocationSection from "./Componants/LocationSection";
 import Footer from "./Componants/Footer";
+import DiscountPopup from "./Componants/DiscountPopup";
 
 const App = () => {
   return (
     <>
+      <DiscountPopup />
       <Navbar />
 
       <Routes>

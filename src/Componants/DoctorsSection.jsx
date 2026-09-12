@@ -7,19 +7,23 @@ const doctors = [
     name: "Dr. Abdul Waris",
     specialty: "General Dentist",
     experience: "7+ Years Experience",
-    image: "public/photo1.jpg",
+    study: "BDS & RDS (Khyber Medical University-pakistan) C-End , C-Ortho ",
+    image: "public/Tasal 3.jpg",
   },
   {
-    name: "Dr. Yalda Hanafi",
+    name: "Dr. Yalda Hanifi",
     specialty: "Cosmetic Dentist",
     experience: "6+ Years Experience",
-    image: "public/photo2.jpg",
+
+    image: "public/femaldoc.png",
+    study: "MDS ( kabul Mecical University )",
   },
   {
     name: "Dr.Milad Niazai",
     specialty: "Orthodontist",
     experience: "10+ Years Experience",
-    image: "public/photo3.jpg",
+    image: "public/IMG_0170.JPG",
+    study: "Kabul Medical University",
   },
 ];
 
@@ -102,7 +106,9 @@ const DoctorsSection = () => {
                   {doctor.experience}
                 </p>
 
-                <div className="mt-5 border-t border-slate-100 pt-5"></div>
+                <div className="mt-5 border-t text-slate-600 border-slate-100 pt-5">
+                  <p>{doctor.study}</p>
+                </div>
               </div>
             </motion.article>
           ))}

@@ -128,10 +128,10 @@ const LocationSection = () => {
                 <h3 className="font-bold text-white">Call Us</h3>
 
                 <a
-                  href="tel:+93787172152"
-                  className="mt-2 block text-sm text-slate-400 transition hover:text-cyan-400"
+                  href="tel: +93789111122"
+                  className="mt-2 block text-sm text-slate-400 transition hover:text-cyan-400 space-y-1"
                 >
-                  +93 787 172 152
+                  +93 789 11 11 22
                 </a>
               </div>
 
@@ -144,9 +144,9 @@ const LocationSection = () => {
                 <h3 className="font-bold text-white">Opening Hours</h3>
 
                 <p className="mt-2 text-sm leading-6 text-slate-400">
-                  Sat - Thu
+                  Sat - Thur
                   <br />
-                  8:00 AM - 6:00 PM
+                  8:00 AM - 9:00 PM
                 </p>
               </div>
 

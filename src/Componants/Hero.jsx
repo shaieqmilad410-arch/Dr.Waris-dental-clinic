@@ -32,10 +32,12 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.7 }}
-            className="max-w-2xl text-5xl font-bold leading-tight tracking-tight text-slate-900 sm:text-6xl"
+            className="max-w-2xl text-5xl font-bold leading-tight tracking-tight text-cyan-600 sm:text-6xl"
           >
-            Your Smile,
-            <span className="block text-cyan-600">Our Passion.</span>
+            Dr.Waris
+            <span className="block text-blue-800">
+              Dental & Implant Center.
+            </span>
           </motion.h1>
 
           {/* Description */}
@@ -120,9 +122,9 @@ const Hero = () => {
             className="relative overflow-hidden rounded-[2rem] shadow-2xl"
           >
             <img
-              src="public\tasal.jpeg"
+              src="public\Tasalphoto.jpeg"
               alt="Professional dentist"
-              className="h-[520px] w-full object-cover"
+              className="h-[570px] w-full object-contain"
             />
 
             {/* Image overlay */}
