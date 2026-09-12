@@ -1,11 +1,12 @@
 import React from "react";
+import ServicesSection from "../Componants/ServicesSection";
 
-const services = () => {
+const Services = () => {
   return (
     <div>
-      <services />
+      <ServicesSection />
     </div>
   );
 };
 
-export default services;
+export default Services;

@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import Navbar from "./Componants/Navbar";
 import Home from "./Pages/Home";
 import About from "./Pages/About";
-import Services from "./Pages/services";
+import Services from "./Pages/Services";
 import Contact from "./Pages/Contact";
 import Hero from "./Componants/Hero";
 import ServicesSection from "./Componants/ServicesSection";
