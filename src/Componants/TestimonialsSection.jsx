@@ -7,7 +7,7 @@ const testimonials = [
   {
     name: "Ahmad Seyar Haqmal",
     role: "Patient",
-    image: "/testimonials.webp",
+    image: "/slide1.jfif",
     text: "The entire experience was excellent. The staff were friendly, professional, and made me feel comfortable throughout my treatment.",
     whatsapp: "#",
     facebook: "#",
@@ -16,7 +16,7 @@ const testimonials = [
   {
     name: "Shouib Majroh",
     role: "Patient",
-    image: "/testimonials.webp",
+    image: "/slide2.jfif",
     text: "I had a great experience at this clinic. The dentist explained everything clearly and the treatment was very comfortable.",
     whatsapp: "#",
     facebook: "#",
@@ -25,7 +25,7 @@ const testimonials = [
   {
     name: "Milad Niazai",
     role: "Patient",
-    image: "/testimonials.webp",
+    image: "/slide3.jfif",
     text: "The clinic is clean, modern, and welcoming. I am very happy with the quality of service I received.",
     whatsapp: "#",
     facebook: "#",
@@ -34,7 +34,7 @@ const testimonials = [
   {
     name: "Milad Shaieq",
     role: "Patient",
-    image: "/testimonials.webp",
+    image: "/slide4.jfif",
     text: "From booking the appointment to completing my treatment, everything was organized and professional.",
     whatsapp: "#",
     facebook: "#",
@@ -43,7 +43,7 @@ const testimonials = [
   {
     name: "Abdul Waris",
     role: "Patient",
-    image: "/testimonials.webp",
+    image: "/slide5.jfif",
     text: "The team was very kind and patient. They answered all my questions and made the whole process easy.",
     whatsapp: "#",
     facebook: "#",
@@ -52,7 +52,7 @@ const testimonials = [
   {
     name: "Sahil Amiri",
     role: "Patient",
-    image: "/testimonials.webp",
+    image: "/slide6.jfif",
     text: "I really appreciated the friendly environment and attention to detail. I would definitely recommend the clinic.",
     whatsapp: "#",
     facebook: "#",
