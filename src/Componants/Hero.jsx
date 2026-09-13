@@ -17,22 +17,13 @@ const Hero = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           {/* Small badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="mb-6 inline-flex items-center gap-2 rounded-full bg-cyan-50 px-4 py-2 text-sm font-medium text-cyan-700"
-          >
-            <span className="h-2 w-2 rounded-full bg-cyan-500" />
-            Trusted Dental Care
-          </motion.div>
 
           {/* Heading */}
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.7 }}
-            className="max-w-2xl text-5xl font-bold leading-tight tracking-tight text-cyan-600 sm:text-6xl"
+            className="max-w-2xl text-5xl font-bold leading-tight tracking-tight text-blue-800 sm:text-6xl"
           >
             Dr.Waris
             <span className="block text-blue-800">
@@ -50,6 +41,15 @@ const Hero = () => {
             Experience modern, comfortable dental care from a team dedicated to
             keeping your smile healthy, confident, and beautiful.
           </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="mb-6 inline-flex items-center gap-2 rounded-full bg-cyan-50 mt-5 px-4 py-2 text-sm font-medium text-cyan-700"
+          >
+            <span className="h-2 w-2 rounded-full bg-cyan-500" />
+            Trusted Dental Care
+          </motion.div>
 
           {/* Buttons */}
           <motion.div
