@@ -8,7 +8,7 @@ import TestimonialsSection from "../Componants/TestimonialsSection";
 import DoctorsSection from "../Componants/DoctorsSection";
 import LocationSection from "../Componants/LocationSection";
 import Footer from "../Componants/Footer";
-import FAQ from "../Componants/Faq";
+import FAQ from "../Componants/FaQ";
 import DeveloperCredit from "../Componants/DeveloperCredit";
 
 const Home = () => {
