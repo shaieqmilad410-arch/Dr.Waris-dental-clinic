@@ -14,7 +14,7 @@ import DoctorsSection from "./Componants/DoctorsSection";
 import LocationSection from "./Componants/LocationSection";
 import Footer from "./Componants/Footer";
 import DiscountPopup from "./Componants/DiscountPopup";
-import FAQ from "./Componants/Faq";
+import FAQ from "./Componants/FAQ";
 import DeveloperCredit from "./Componants/DeveloperCredit";
 
 const App = () => {
