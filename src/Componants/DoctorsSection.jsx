@@ -22,7 +22,7 @@ const doctors = [
     name: "Dr.Milad Niazai",
     specialty: "Orthodontist",
     experience: "10+ Years Experience",
-    image: "/IMG_0170.JPG",
+    image: "/tasal.jpeg",
     study: "Kabul Medical University",
   },
 ];

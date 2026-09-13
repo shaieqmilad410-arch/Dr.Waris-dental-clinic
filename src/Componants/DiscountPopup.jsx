@@ -35,7 +35,7 @@ const DiscountPopup = () => {
         </h2>
 
         <p className="mb-4 text-gray-600">
-          Get 20% discount on dental cleaning and examination this month.
+          Get 30% discount on dental cleaning and examination this month.
         </p>
         {/* <button
           to="/acontact"

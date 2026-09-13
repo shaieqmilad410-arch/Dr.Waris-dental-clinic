@@ -8,6 +8,8 @@ import TestimonialsSection from "../Componants/TestimonialsSection";
 import DoctorsSection from "../Componants/DoctorsSection";
 import LocationSection from "../Componants/LocationSection";
 import Footer from "../Componants/Footer";
+import FAQ from "../Componants/Faq";
+import DeveloperCredit from "../Componants/DeveloperCredit";
 
 const Home = () => {
   return (
@@ -19,6 +21,8 @@ const Home = () => {
       <TestimonialsSection />
       <DoctorsSection />
       <LocationSection />
+      <FAQ />
+      <DeveloperCredit />
       <Footer />
     </div>
   );
