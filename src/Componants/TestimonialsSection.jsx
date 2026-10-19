@@ -1,7 +1,26 @@
-import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Quote, Star, ChevronLeft, ChevronRight } from "lucide-react";
-import { FaWhatsapp, FaFacebookF, FaInstagram } from "react-icons/fa";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+
+import {
+  motion,
+  AnimatePresence,
+  useInView,
+  useReducedMotion,
+} from "framer-motion";
+
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+import {
+  Quote,
+  Star,
+  ChevronLeft,
+  ChevronRight,
+  Pause,
+  Play,
+  MessageCircle,
+} from "lucide-react";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const testimonials = [
   {
@@ -60,443 +79,567 @@ const testimonials = [
   },
 ];
 
+const socialTypes = [
+  { key: "whatsapp", label: "WhatsApp" },
+  { key: "facebook", label: "Facebook" },
+  { key: "instagram", label: "Instagram" },
+];
+
+const controlClass =
+  "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-cyan-800 transition-colors hover:border-cyan-800 hover:bg-cyan-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-700";
+
 const TestimonialsSection = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const sectionRef = useRef(null);
 
-  const currentTestimonial = testimonials[currentIndex];
+  const reduceMotion = useReducedMotion();
+  const isInView = useInView(sectionRef, { amount: 0.2 });
 
-  // Next testimonial
-  const nextTestimonial = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1,
-    );
+  const [slide, setSlide] = useState({
+    index: 0,
+    direction: 1,
+  });
+
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+  const [hasFocus, setHasFocus] = useState(false);
+  const [pageHidden, setPageHidden] = useState(false);
+
+  const current = testimonials[slide.index];
+
+  const activeSocials = socialTypes.filter((social) =>
+    /^https?:\/\//i.test(current[social.key] || ""),
+  );
+
+  const canAutoplay =
+    isPlaying &&
+    isInView &&
+    !isHovered &&
+    !hasFocus &&
+    !pageHidden &&
+    !reduceMotion;
+
+  const changeSlide = (direction) => {
+    setSlide((previous) => ({
+      index:
+        (previous.index + direction + testimonials.length) %
+        testimonials.length,
+      direction,
+    }));
   };
 
-  // Previous testimonial
-  const previousTestimonial = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1,
-    );
+  const goToSlide = (index) => {
+    setSlide((previous) => ({
+      index,
+      direction: index >= previous.index ? 1 : -1,
+    }));
   };
 
-  // Automatic slideshow
+  // Automatic slideshow.
   useEffect(() => {
-    const interval = setInterval(() => {
-      nextTestimonial();
+    if (!canAutoplay) return;
+
+    const timer = window.setTimeout(() => {
+      setSlide((previous) => ({
+        index: (previous.index + 1) % testimonials.length,
+        direction: 1,
+      }));
     }, 5000);
 
-    return () => clearInterval(interval);
+    return () => window.clearTimeout(timer);
+  }, [canAutoplay, slide.index]);
+
+  // Pause autoplay when the browser tab is hidden.
+  useEffect(() => {
+    const handleVisibility = () => {
+      setPageHidden(document.hidden);
+    };
+
+    handleVisibility();
+
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, []);
+
+  // GSAP scroll animations.
+  useLayoutEffect(() => {
+    const mm = gsap.matchMedia();
+
+    mm.add(
+      {
+        desktop: "(min-width: 1024px)",
+        allowMotion: "(prefers-reduced-motion: no-preference)",
+      },
+      (context) => {
+        const { desktop, allowMotion } = context.conditions;
+
+        if (!allowMotion) return;
+
+        const q = gsap.utils.selector(sectionRef.current);
+
+        // Heading entrance.
+        gsap
+          .timeline({
+            defaults: {
+              duration: 0.9,
+              ease: "power3.out",
+            },
+            scrollTrigger: {
+              trigger: q("[data-review-heading]")[0],
+              start: "top 88%",
+              once: true,
+            },
+          })
+          .from(q("[data-review-label]"), {
+            autoAlpha: 0,
+            y: 20,
+          })
+          .from(
+            q("[data-review-title]"),
+            {
+              yPercent: 110,
+              rotate: 3,
+              stagger: 0.12,
+            },
+            0.12,
+          )
+          .from(
+            q("[data-review-description]"),
+            {
+              autoAlpha: 0,
+              y: 20,
+            },
+            0.3,
+          );
+
+        // Cinematic carousel entrance.
+        // Framer Motion animates the slides inside this wrapper.
+        gsap.from(q("[data-slider-reveal]"), {
+          autoAlpha: 0,
+          y: desktop ? 85 : 40,
+          rotateX: desktop ? 12 : 0,
+          scale: desktop ? 0.93 : 0.98,
+          transformOrigin: "center bottom",
+          duration: 1.2,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: q("[data-slider-slot]")[0],
+            start: "top 90%",
+            once: true,
+          },
+        });
+
+        // Bottom rating entrance.
+        gsap.from(q("[data-rating-reveal]"), {
+          autoAlpha: 0,
+          y: 30,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: q("[data-rating-slot]")[0],
+            start: "top 94%",
+            once: true,
+          },
+        });
+
+        // Scroll-controlled heading accent.
+        gsap.fromTo(
+          q("[data-review-progress]"),
+          { scaleX: 0 },
+          {
+            scaleX: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: q("[data-slider-slot]")[0],
+              start: "top 90%",
+              end: "top 30%",
+              scrub: 0.6,
+            },
+          },
+        );
+
+        // Desktop background parallax.
+        if (desktop) {
+          gsap.to(q("[data-review-glow]"), {
+            x: -100,
+            y: -120,
+            ease: "none",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 1.5,
+            },
+          });
+        }
+      },
+      sectionRef.current,
+    );
+
+    return () => mm.revert();
+  }, []);
+
+  const slideVariants = {
+    enter: (direction) => ({
+      opacity: 0,
+      x: reduceMotion ? 0 : direction * 45,
+      rotateY: reduceMotion ? 0 : direction * -5,
+    }),
+    center: {
+      opacity: 1,
+      x: 0,
+      rotateY: 0,
+    },
+    exit: (direction) => ({
+      opacity: 0,
+      x: reduceMotion ? 0 : direction * -45,
+      rotateY: reduceMotion ? 0 : direction * 5,
+    }),
+  };
 
   return (
     <section
+      ref={sectionRef}
       id="testimonials"
-      className="relative overflow-hidden bg-white py-20 sm:py-24 lg:py-28"
+      aria-labelledby="testimonials-heading"
+      className="relative isolate scroll-mt-28 overflow-hidden bg-white py-20 sm:py-24 lg:py-28"
     >
-      {/* Background Decorations */}
-      <div className="pointer-events-none absolute -left-40 top-20 h-80 w-80 rounded-full bg-cyan-100/60 blur-3xl" />
+      {/* Background */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-40 top-40 h-96 w-96 rounded-full bg-cyan-100/60 blur-[100px]"
+      />
 
-      <div className="pointer-events-none absolute -right-40 bottom-20 h-80 w-80 rounded-full bg-blue-100/60 blur-3xl" />
-
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-50/50 blur-3xl" />
+      <div
+        data-review-glow
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-40 bottom-10 h-[450px] w-[450px] rounded-full bg-blue-100/60 blur-[100px]"
+      />
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        {/* ================= HEADER ================= */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="mx-auto mb-14 max-w-3xl text-center"
+        {/* Heading */}
+        <div
+          data-review-heading
+          className="mx-auto mb-12 max-w-3xl text-center sm:mb-16"
         >
-          <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-cyan-50 px-4 py-2 text-sm font-semibold text-cyan-700">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-500" />
-            Patient Reviews
-          </span>
-
-          <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
-            What Our <span className="text-cyan-600">Patients Say</span>
-          </h2>
-
-          <p className="mt-5 text-base leading-7 text-slate-600 sm:text-lg">
-            Hear from patients who have experienced our professional dental care
-            and friendly service.
-          </p>
-        </motion.div>
-
-        {/* ================= TESTIMONIAL SLIDER ================= */}
-        <div className="relative">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentIndex}
-              initial={{ opacity: 0, x: 80 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -80 }}
-              transition={{
-                duration: 0.5,
-                ease: "easeOut",
-              }}
-              className="
-                relative
-                overflow-hidden
-                rounded-3xl
-                border
-                border-cyan-100
-                bg-white
-                shadow-xl
-                shadow-cyan-100/40
-              "
-            >
-              {/* Top cyan line */}
-              <div className="h-1.5 w-full bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600" />
-
-              <div className="grid items-center lg:grid-cols-2">
-                {/* ================= IMAGE ================= */}
-                <div className="relative h-[320px] overflow-hidden bg-cyan-50 sm:h-[380px] lg:h-[460px]">
-                  <motion.img
-                    src={currentTestimonial.image}
-                    alt={currentTestimonial.name}
-                    initial={{ scale: 1.08 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 1 }}
-                    className="h-full w-full object-cover"
-                  />
-
-                  {/* Image gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent" />
-
-                  {/* Quote badge */}
-                  <div
-                    className="
-                      absolute
-                      left-6
-                      top-6
-                      flex
-                      h-14
-                      w-14
-                      items-center
-                      justify-center
-                      rounded-2xl
-                      bg-cyan-500
-                      text-white
-                      shadow-xl
-                    "
-                  >
-                    <Quote size={27} />
-                  </div>
-
-                  {/* Patient name over image */}
-                  <div className="absolute bottom-6 left-6 text-white">
-                    <p className="text-sm font-medium text-cyan-200">
-                      {currentTestimonial.role}
-                    </p>
-
-                    <h3 className="mt-1 text-2xl font-bold">
-                      {currentTestimonial.name}
-                    </h3>
-                  </div>
-                </div>
-
-                {/* ================= CONTENT ================= */}
-                <div className="relative p-7 sm:p-10 lg:p-14">
-                  {/* Large quote decoration */}
-                  <Quote
-                    size={100}
-                    strokeWidth={1}
-                    className="absolute right-8 top-8 text-cyan-50"
-                  />
-
-                  <div className="relative">
-                    {/* Stars */}
-                    <div className="mb-6 flex gap-1">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          size={20}
-                          className="fill-yellow-400 text-yellow-400"
-                        />
-                      ))}
-                    </div>
-
-                    {/* Review */}
-                    <p className="text-lg leading-8 text-slate-600 sm:text-xl">
-                      “{currentTestimonial.text}”
-                    </p>
-
-                    {/* Divider */}
-                    <div className="my-8 h-px bg-slate-100" />
-
-                    {/* Patient info */}
-                    <div className="flex items-center gap-4">
-                      <img
-                        src={currentTestimonial.image}
-                        alt={currentTestimonial.name}
-                        className="
-                          h-14
-                          w-14
-                          rounded-full
-                          object-cover
-                          ring-4
-                          ring-cyan-50
-                        "
-                      />
-
-                      <div>
-                        <h3 className="font-bold text-slate-900">
-                          {currentTestimonial.name}
-                        </h3>
-
-                        <p className="text-sm text-slate-500">
-                          {currentTestimonial.role}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* ================= SOCIAL MEDIA ================= */}
-                    <div className="mt-7">
-                      <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                        Connect
-                      </p>
-
-                      <div className="flex gap-3">
-                        {/* WhatsApp */}
-                        <a
-                          href={currentTestimonial.whatsapp}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label="WhatsApp"
-                          className="
-                            flex
-                            h-10
-                            w-10
-                            items-center
-                            justify-center
-                            rounded-full
-                            border
-                            border-cyan-100
-                            bg-cyan-50
-                            text-cyan-600
-                            transition
-                            duration-300
-                            hover:-translate-y-1
-                            hover:bg-cyan-500
-                            hover:text-white
-                            hover:shadow-lg
-                            hover:shadow-cyan-200
-                          "
-                        >
-                          <FaWhatsapp size={19} />
-                        </a>
-
-                        {/* Facebook */}
-                        <a
-                          href={currentTestimonial.facebook}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label="Facebook"
-                          className="
-                            flex
-                            h-10
-                            w-10
-                            items-center
-                            justify-center
-                            rounded-full
-                            border
-                            border-cyan-100
-                            bg-cyan-50
-                            text-cyan-600
-                            transition
-                            duration-300
-                            hover:-translate-y-1
-                            hover:bg-cyan-500
-                            hover:text-white
-                            hover:shadow-lg
-                            hover:shadow-cyan-200
-                          "
-                        >
-                          <FaFacebookF size={19} />
-                        </a>
-
-                        {/* Instagram */}
-                        <a
-                          href={currentTestimonial.instagram}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label="Instagram"
-                          className="
-                            flex
-                            h-10
-                            w-10
-                            items-center
-                            justify-center
-                            rounded-full
-                            border
-                            border-cyan-100
-                            bg-cyan-50
-                            text-cyan-600
-                            transition
-                            duration-300
-                            hover:-translate-y-1
-                            hover:bg-cyan-500
-                            hover:text-white
-                            hover:shadow-lg
-                            hover:shadow-cyan-200
-                          "
-                        >
-                          <FaInstagram size={19} />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* ================= ARROWS ================= */}
-
-          {/* Previous */}
-          <button
-            onClick={previousTestimonial}
-            aria-label="Previous testimonial"
-            className="
-              absolute
-              left-2
-              top-1/2
-              z-20
-              flex
-              h-11
-              w-11
-              -translate-x-1/2
-              -translate-y-1/2
-              items-center
-              justify-center
-              rounded-full
-              border
-              border-cyan-100
-              bg-white
-              text-cyan-600
-              shadow-lg
-              transition
-              duration-300
-              hover:scale-110
-              hover:bg-cyan-500
-              hover:text-white
-              sm:left-0
-            "
+          <div
+            data-review-label
+            className="mb-5 inline-flex items-center gap-3"
           >
-            <ChevronLeft size={22} />
-          </button>
+            <span aria-hidden="true" className="h-px w-8 bg-cyan-700" />
 
-          {/* Next */}
-          <button
-            onClick={nextTestimonial}
-            aria-label="Next testimonial"
-            className="
-              absolute
-              right-2
-              top-1/2
-              z-20
-              flex
-              h-11
-              w-11
-              translate-x-1/2
-              -translate-y-1/2
-              items-center
-              justify-center
-              rounded-full
-              border
-              border-cyan-100
-              bg-white
-              text-cyan-600
-              shadow-lg
-              transition
-              duration-300
-              hover:scale-110
-              hover:bg-cyan-500
-              hover:text-white
-              sm:right-0
-            "
-          >
-            <ChevronRight size={22} />
-          </button>
-        </div>
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700 sm:text-sm">
+              Patient Reviews
+            </span>
 
-        {/* ================= DOTS ================= */}
-        <div className="mt-8 flex items-center justify-center gap-2">
-          {testimonials.map((testimonial, index) => (
-            <button
-              key={testimonial.name}
-              onClick={() => setCurrentIndex(index)}
-              aria-label={`Show testimonial ${index + 1}`}
-              className="group p-1"
-            >
-              <span
-                className={`
-                  block
-                  h-2
-                  rounded-full
-                  transition-all
-                  duration-300
-                  ${
-                    currentIndex === index
-                      ? "w-8 bg-cyan-500"
-                      : "w-2 bg-cyan-200 group-hover:bg-cyan-400"
-                  }
-                `}
-              />
-            </button>
-          ))}
-        </div>
-
-        {/* ================= BOTTOM RATING ================= */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="
-            mx-auto
-            mt-12
-            flex
-            max-w-xl
-            flex-col
-            items-center
-            justify-center
-            gap-5
-            rounded-2xl
-            border
-            border-cyan-100
-            bg-cyan-50/50
-            px-6
-            py-6
-            text-center
-            sm:flex-row
-            sm:gap-6
-            sm:text-left
-          "
-        >
-          <div>
-            <p className="text-3xl font-bold text-slate-900">4.9/5</p>
-
-            <div className="mt-1 flex justify-center gap-1 sm:justify-start">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Star
-                  key={star}
-                  size={17}
-                  className="fill-yellow-400 text-yellow-400"
-                />
-              ))}
-            </div>
+            <span aria-hidden="true" className="h-px w-8 bg-cyan-700" />
           </div>
 
-          <div className="hidden h-12 w-px bg-cyan-200 sm:block" />
+          <h2
+            id="testimonials-heading"
+            className="text-3xl font-bold leading-[1.15] tracking-tight text-slate-900 sm:text-4xl lg:text-5xl"
+          >
+            <span className="block overflow-hidden pb-1">
+              <span data-review-title className="block">
+                What Our
+              </span>
+            </span>
 
-          <p className="max-w-xs text-sm leading-6 text-slate-600">
-            Trusted by patients who value professional, comfortable, and caring
-            dental services.
+            <span className="block overflow-hidden pb-2">
+              <span data-review-title className="block text-cyan-700">
+                Patients Say.
+              </span>
+            </span>
+          </h2>
+
+          <p
+            data-review-description
+            className="mx-auto mt-5 max-w-xl text-base leading-7 text-slate-600 sm:text-lg"
+          >
+            Hear from patients who have experienced our dental care and friendly
+            service.
           </p>
-        </motion.div>
+
+          <div
+            aria-hidden="true"
+            className="mx-auto mt-7 h-1 w-24 overflow-hidden rounded-full bg-cyan-100"
+          >
+            <div
+              data-review-progress
+              className="h-full origin-left rounded-full bg-cyan-700"
+            />
+          </div>
+        </div>
+
+        {/* Carousel */}
+        <div
+          data-slider-slot
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="Patient testimonials"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onFocusCapture={() => setHasFocus(true)}
+          onBlurCapture={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) {
+              setHasFocus(false);
+            }
+          }}
+          className="[perspective:1400px]"
+        >
+          <div data-slider-reveal>
+            <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_25px_75px_-35px_rgba(8,51,68,0.3)]">
+              <div
+                aria-live={canAutoplay ? "off" : "polite"}
+                aria-atomic="true"
+                className="overflow-hidden [perspective:1200px]"
+              >
+                <AnimatePresence
+                  initial={false}
+                  mode="wait"
+                  custom={slide.direction}
+                >
+                  <motion.article
+                    key={slide.index}
+                    custom={slide.direction}
+                    variants={slideVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{
+                      duration: reduceMotion ? 0 : 0.4,
+                      ease: "easeInOut",
+                    }}
+                    role="group"
+                    aria-roledescription="slide"
+                    aria-label={`${slide.index + 1} of ${
+                      testimonials.length
+                    }: ${current.name}`}
+                    className="grid min-w-0 md:grid-cols-[0.9fr_1.1fr]"
+                  >
+                    {/* Patient image */}
+                    <div className="relative h-[300px] overflow-hidden bg-cyan-50 sm:h-[380px] md:h-full md:min-h-[460px]">
+                      <motion.img
+                        src={current.image}
+                        alt={current.name}
+                        initial={{
+                          scale: reduceMotion ? 1 : 1.08,
+                        }}
+                        animate={{ scale: 1 }}
+                        transition={{
+                          duration: reduceMotion ? 0 : 1.2,
+                          ease: "easeOut",
+                        }}
+                        className="absolute inset-0 h-full w-full object-cover"
+                      />
+
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-0 bg-gradient-to-t from-cyan-950/90 via-cyan-950/10 to-transparent"
+                      />
+
+                      <div
+                        aria-hidden="true"
+                        className="absolute left-5 top-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/20 bg-white/15 text-white backdrop-blur-md sm:left-7 sm:top-7"
+                      >
+                        <Quote size={24} />
+                      </div>
+
+                      <div className="absolute inset-x-5 bottom-6 text-white sm:inset-x-7 sm:bottom-8">
+                        <p className="text-xs font-medium uppercase tracking-[0.18em] text-cyan-200">
+                          {current.role}
+                        </p>
+
+                        <h3 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+                          {current.name}
+                        </h3>
+                      </div>
+                    </div>
+
+                    {/* Review content */}
+                    <div className="relative flex min-w-0 flex-col justify-center p-6 sm:p-9 lg:p-12">
+                      <Quote
+                        size={110}
+                        strokeWidth={1}
+                        aria-hidden="true"
+                        className="pointer-events-none absolute right-5 top-5 text-cyan-50"
+                      />
+
+                      <div className="relative">
+                        <div
+                          role="img"
+                          aria-label="5 out of 5 stars"
+                          className="mb-6 flex gap-1"
+                        >
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              size={18}
+                              aria-hidden="true"
+                              className="fill-amber-400 text-amber-400"
+                            />
+                          ))}
+                        </div>
+
+                        <blockquote className="min-h-[180px] text-lg font-medium leading-8 tracking-tight text-slate-700 sm:text-xl md:min-h-[200px]">
+                          “{current.text}”
+                        </blockquote>
+
+                        <div className="mt-7 flex items-center gap-3 border-t border-slate-100 pt-6">
+                          <img
+                            src={current.image}
+                            alt=""
+                            className="h-11 w-11 shrink-0 rounded-full object-cover ring-4 ring-cyan-50"
+                          />
+
+                          <div className="min-w-0">
+                            <p className="font-semibold text-slate-900">
+                              {current.name}
+                            </p>
+
+                            <p className="mt-1 text-xs text-slate-500">
+                              {current.role}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Only show real social URLs */}
+                        {activeSocials.length > 0 && (
+                          <div className="mt-5 flex flex-wrap gap-2">
+                            {activeSocials.map((social) => (
+                              <motion.a
+                                key={social.key}
+                                href={current[social.key]}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label={`${current.name} on ${social.label}`}
+                                whileHover={
+                                  reduceMotion ? undefined : { y: -3 }
+                                }
+                                className="inline-flex items-center gap-2 rounded-full bg-cyan-50 px-3 py-2 text-xs font-semibold text-cyan-800 transition-colors hover:bg-cyan-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-700"
+                              >
+                                <MessageCircle size={15} aria-hidden="true" />
+                                {social.label}
+                              </motion.a>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </motion.article>
+                </AnimatePresence>
+              </div>
+
+              {/* Carousel controls */}
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/70 px-4 py-4 sm:px-7">
+                <div className="flex items-center gap-1">
+                  {testimonials.map((testimonial, index) => (
+                    <button
+                      key={testimonial.name}
+                      type="button"
+                      onClick={() => goToSlide(index)}
+                      aria-label={`Show review by ${testimonial.name}`}
+                      aria-current={index === slide.index ? "true" : undefined}
+                      className="flex h-11 min-w-6 items-center justify-center rounded-lg px-1 focus-visible:outline-2 focus-visible:outline-cyan-700"
+                    >
+                      <motion.span
+                        aria-hidden="true"
+                        animate={{
+                          width: index === slide.index ? 24 : 6,
+                          backgroundColor:
+                            index === slide.index ? "#155e75" : "#cbd5e1",
+                        }}
+                        transition={{
+                          duration: reduceMotion ? 0 : 0.25,
+                        }}
+                        className="block h-1.5 rounded-full"
+                      />
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {!reduceMotion && (
+                    <button
+                      type="button"
+                      onClick={() => setIsPlaying((playing) => !playing)}
+                      aria-label={
+                        isPlaying
+                          ? "Pause automatic slideshow"
+                          : "Resume automatic slideshow"
+                      }
+                      className={controlClass}
+                    >
+                      {isPlaying ? (
+                        <Pause size={16} aria-hidden="true" />
+                      ) : (
+                        <Play size={16} aria-hidden="true" />
+                      )}
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => changeSlide(-1)}
+                    aria-label="Previous testimonial"
+                    className={controlClass}
+                  >
+                    <ChevronLeft size={20} aria-hidden="true" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => changeSlide(1)}
+                    aria-label="Next testimonial"
+                    className={controlClass}
+                  >
+                    <ChevronRight size={20} aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Overall rating */}
+        <div data-rating-slot className="mx-auto mt-10 max-w-xl">
+          <div
+            data-rating-reveal
+            className="flex flex-col items-center gap-5 rounded-2xl border border-cyan-100 bg-cyan-50/60 px-6 py-6 text-center sm:flex-row sm:gap-6 sm:text-left"
+          >
+            <div className="shrink-0">
+              <p className="text-3xl font-bold tracking-tight text-cyan-900">
+                4.9
+                <span className="text-lg text-cyan-800/60">/5</span>
+              </p>
+
+              <div
+                aria-hidden="true"
+                className="mt-2 flex justify-center gap-1"
+              >
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    size={15}
+                    className="fill-amber-400 text-amber-400"
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div
+              aria-hidden="true"
+              className="hidden h-12 w-px shrink-0 bg-cyan-200 sm:block"
+            />
+
+            <p className="text-sm leading-6 text-slate-600">
+              Trusted by patients who value professional, comfortable, and
+              caring dental services.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -7,7 +7,7 @@ import Services from "./Pages/Services";
 import Contact from "./Pages/Contact";
 import Hero from "./Componants/Hero";
 import ServicesSection from "./Componants/ServicesSection";
-import AboutSection from "./Componants/AboutSection";
+
 import ContactSection from "./Componants/ContactSection";
 import TestimonialsSection from "./Componants/TestimonialsSection";
 import DoctorsSection from "./Componants/DoctorsSection";
@@ -16,6 +16,7 @@ import Footer from "./Componants/Footer";
 import DiscountPopup from "./Componants/DiscountPopup";
 import FAQ from "./Componants/FAQ";
 import DeveloperCredit from "./Componants/DeveloperCredit";
+import AboutSection from "./Componants/AboutSection";
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
         <Route path="/testimonials" element={<TestimonialsSection />} />
         <Route path="/doctors" element={<DoctorsSection />} />
       </Routes>
+      <Footer />
     </>
   );
 };

@@ -7,7 +7,7 @@ import ContactSection from "../Componants/ContactSection";
 import TestimonialsSection from "../Componants/TestimonialsSection";
 import DoctorsSection from "../Componants/DoctorsSection";
 import LocationSection from "../Componants/LocationSection";
-import Footer from "../Componants/Footer";
+
 import FAQ from "../Componants/FAQ";
 import DeveloperCredit from "../Componants/DeveloperCredit";
 
@@ -23,7 +23,6 @@ const Home = () => {
       <LocationSection />
       <FAQ />
       <DeveloperCredit />
-      <Footer />
     </div>
   );
 };
