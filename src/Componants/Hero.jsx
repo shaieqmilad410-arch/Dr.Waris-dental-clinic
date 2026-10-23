@@ -1,415 +1,287 @@
-import React, { useLayoutEffect, useRef } from "react";
+import React from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
-  ArrowRight,
+  ArrowUpRight,
   ArrowDown,
   CalendarDays,
   ShieldCheck,
-  Star,
+  Heart,
+  Sparkles,
+  Check,
 } from "lucide-react";
 
-gsap.registerPlugin(ScrollTrigger);
-
 const Hero = () => {
-  const heroRef = useRef(null);
   const reduceMotion = useReducedMotion();
 
-  useLayoutEffect(() => {
-    const hero = heroRef.current;
-    const mm = gsap.matchMedia();
-
-    mm.add(
-      {
-        desktop: "(min-width: 1024px)",
-        mobile: "(max-width: 1023px)",
-        allowMotion: "(prefers-reduced-motion: no-preference)",
-      },
-      (context) => {
-        const { desktop, allowMotion } = context.conditions;
-
-        if (!allowMotion) return;
-
-        const q = gsap.utils.selector(hero);
-
-        if (desktop) {
-          // One scroll timeline controls the entire desktop scene.
-          const scene = gsap.timeline({
-            defaults: { ease: "none" },
-            scrollTrigger: {
-              trigger: hero,
-              start: "top top",
-              end: "+=120%",
-              pin: true,
-              scrub: 1,
-              anticipatePin: 1,
-              invalidateOnRefresh: true,
-            },
-          });
-
-          scene
-            // Scroll indicator disappears as the scene begins.
-            .to(
-              q("[data-scroll-hint]"),
-              { autoAlpha: 0, y: 20, duration: 0.12 },
-              0,
-            )
-
-            // Cyan color travels through the clinic name.
-            .fromTo(
-              q("[data-title-color]"),
-              { backgroundPosition: "100% 50%" },
-              {
-                backgroundPosition: "0% 50%",
-                duration: 0.45,
-              },
-              0,
-            )
-
-            // The photograph straightens and grows.
-            .fromTo(
-              q("[data-photo-scene]"),
-              {
-                rotateY: -18,
-                rotateZ: 4,
-                scale: 0.9,
-              },
-              {
-                rotateY: 0,
-                rotateZ: 0,
-                scale: 1.04,
-                duration: 0.65,
-              },
-              0,
-            )
-
-            // A light reflection crosses the photo.
-            .fromTo(
-              q("[data-shine]"),
-              { xPercent: -180 },
-              { xPercent: 180, duration: 0.6 },
-              0.08,
-            )
-
-            // Cards arrive from opposite sides.
-            .fromTo(
-              q("[data-appointment-card]"),
-              { x: -100, y: 45, autoAlpha: 0 },
-              {
-                x: 0,
-                y: 0,
-                autoAlpha: 1,
-                duration: 0.35,
-              },
-              0.12,
-            )
-            .fromTo(
-              q("[data-rating-card]"),
-              { x: 100, y: -40, autoAlpha: 0 },
-              {
-                x: 0,
-                y: 0,
-                autoAlpha: 1,
-                duration: 0.35,
-              },
-              0.22,
-            )
-
-            // Background changes while scrolling.
-            .to(
-              q("[data-glow]"),
-              {
-                scale: 1.7,
-                x: -100,
-                y: 60,
-                duration: 1,
-              },
-              0,
-            )
-
-            // Text leaves in layers near the end of the scene.
-            .to(
-              q("[data-copy-part]"),
-              {
-                y: -65,
-                autoAlpha: 0,
-                stagger: 0.045,
-                duration: 0.24,
-              },
-              0.64,
-            )
-
-            // Photo becomes the final focal point.
-            .to(
-              q("[data-photo-position]"),
-              {
-                x: () => -Math.min(window.innerWidth * 0.1, 150),
-                duration: 0.32,
-              },
-              0.68,
-            )
-            .to(q("[data-photo-scene]"), { scale: 1.1, duration: 0.32 }, 0.68);
-        } else {
-          // Natural scrolling on smaller screens.
-          gsap.from(q("[data-copy-part]"), {
-            y: 32,
-            autoAlpha: 0,
-            stagger: 0.12,
-            duration: 0.8,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: q("[data-copy]")[0],
-              start: "top 88%",
-              once: true,
-            },
-          });
-
-          gsap.from(q("[data-photo-position]"), {
-            y: 65,
-            autoAlpha: 0,
-            scale: 0.94,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: q("[data-photo-position]")[0],
-              start: "top 90%",
-              once: true,
-            },
-          });
-        }
-      },
-      hero,
-    );
-
-    return () => mm.revert();
-  }, []);
-
-  const hover = reduceMotion ? undefined : { scale: 1.04 };
+  const hover = reduceMotion ? undefined : { y: -4 };
   const tap = reduceMotion ? undefined : { scale: 0.97 };
 
   return (
     <section
-      ref={heroRef}
+      id="home"
       aria-labelledby="hero-title"
-      className="relative isolate overflow-hidden bg-slate-50"
+      className="relative isolate overflow-hidden bg-[#f5fbfc]"
     >
-      {/* Animated background */}
+      {/* Subtle background pattern */}
       <div
-        data-glow
         aria-hidden="true"
-        className="pointer-events-none absolute -right-32 -top-32 h-[600px] w-[600px] rounded-full bg-cyan-200/40 blur-[100px]"
+        className="pointer-events-none absolute inset-0 opacity-40"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, #a5dce5 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+          maskImage: "linear-gradient(to bottom, black, transparent 85%)",
+          WebkitMaskImage: "linear-gradient(to bottom, black, transparent 85%)",
+        }}
+      />
+
+      {/* Moving background glow */}
+      <motion.div
+        aria-hidden="true"
+        animate={
+          reduceMotion
+            ? undefined
+            : {
+                x: [0, -35, 0],
+                y: [0, 25, 0],
+                scale: [1, 1.12, 1],
+              }
+        }
+        transition={{
+          duration: 14,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="pointer-events-none absolute -right-40 -top-32 h-[650px] w-[650px] rounded-full bg-cyan-200/45 blur-[100px]"
       />
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-40 -left-32 h-[500px] w-[500px] rounded-full bg-blue-100/60 blur-[100px]"
+        className="pointer-events-none absolute -bottom-48 -left-40 h-[550px] w-[550px] rounded-full bg-teal-100/60 blur-[110px]"
       />
 
-      <div className="relative mx-auto grid min-h-[100svh] max-w-7xl items-center gap-14 px-6 py-20 lg:h-[100svh] lg:grid-cols-2 lg:gap-10 lg:px-8 lg:py-12">
-        {/* TEXT */}
-        <div data-copy className="relative z-10">
-          <div
-            data-copy-part
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-200 bg-white/80 px-4 py-2 text-sm font-medium text-cyan-700"
-          >
-            <motion.span
-              aria-hidden="true"
-              animate={reduceMotion ? { opacity: 1 } : { opacity: [1, 0.4, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="h-2 w-2 rounded-full bg-cyan-500"
-            />
-            Trusted Dental Care
+      <div className="relative mx-auto grid min-h-[100svh] max-w-7xl items-center gap-16 px-5 pb-20 pt-32 sm:px-8 sm:pt-36 lg:grid-cols-[1.08fr_0.92fr] lg:gap-14 lg:pb-28 lg:pt-40">
+        {/* Text */}
+        <div className="relative z-10 min-w-0">
+          <div className="mb-7 inline-flex items-center gap-2.5 rounded-full border border-cyan-200 bg-white/85 py-2 pl-2 pr-4 shadow-sm shadow-cyan-950/5">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-cyan-700 text-white">
+              <Sparkles size={14} aria-hidden="true" />
+            </span>
+
+            <span className="text-xs font-semibold tracking-wide text-cyan-800 sm:text-sm">
+              A brighter smile starts here
+            </span>
           </div>
 
           <h1
             id="hero-title"
-            data-copy-part
-            className="text-4xl font-bold leading-[1.08] tracking-tight text-blue-900 sm:text-6xl xl:text-7xl"
+            className="text-[clamp(2.75rem,6vw,5.75rem)] font-bold leading-[1.02] tracking-[-0.055em]"
           >
-            Dr.Waris
-            <span
-              data-title-color
-              style={{
-                backgroundImage:
-                  "linear-gradient(90deg, #0891b2 0%, #0891b2 40%, #1e40af 60%, #1e40af 100%)",
-                backgroundSize: "250% 100%",
-                backgroundPosition: "100% 50%",
-              }}
-              className="mt-2 block bg-clip-text text-transparent"
-            >
-              Dental &amp;
-              <br />
-              Implant Center.
-            </span>
+            <span className="block text-cyan-950">Dr. Waris</span>
+
+            <span className="mt-3 block text-cyan-700">Dental &amp;</span>
+
+            <span className="block text-cyan-600">Implant Center.</span>
           </h1>
 
-          <p
-            data-copy-part
-            className="mt-6 max-w-lg text-base leading-8 text-slate-600 sm:text-lg"
-          >
-            Experience modern, comfortable dental care from a team dedicated to
-            keeping your smile healthy, confident, and beautiful.
+          <div className="mt-7 flex items-center gap-3">
+            <span
+              aria-hidden="true"
+              className="h-px w-10 shrink-0 bg-cyan-600"
+            />
+
+            <p className="text-sm font-semibold tracking-wide text-cyan-800 sm:text-base">
+              Modern care. A confident smile.
+            </p>
+          </div>
+
+          <p className="mt-5 max-w-lg text-base leading-8 text-slate-600 sm:text-lg">
+            Experience comfortable, personalized dental care from a team
+            dedicated to keeping your smile healthy, confident, and beautiful.
           </p>
 
-          <div data-copy-part className="mt-8 flex flex-col gap-4 sm:flex-row">
+          {/* Buttons */}
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:gap-4">
             <motion.a
-              href="#appointment"
+              href="/#contact"
               whileHover={hover}
               whileTap={tap}
-              className="group inline-flex items-center justify-center gap-2 rounded-full bg-cyan-600 px-6 py-4 font-semibold text-white shadow-xl shadow-cyan-600/20 transition-colors hover:bg-cyan-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-600"
+              className="group inline-flex items-center justify-center gap-4 rounded-full bg-cyan-700 py-3 pl-6 pr-3 text-sm font-semibold text-white shadow-lg shadow-cyan-700/20 transition-colors hover:bg-cyan-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-700"
             >
               Book an Appointment
-              <ArrowRight
-                size={18}
-                aria-hidden="true"
-                className="transition-transform group-hover:translate-x-1 motion-reduce:transform-none"
-              />
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15">
+                <ArrowUpRight
+                  size={20}
+                  aria-hidden="true"
+                  className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transform-none"
+                />
+              </span>
             </motion.a>
 
             <motion.a
-              href="#services"
+              href="/#services"
               whileHover={hover}
               whileTap={tap}
-              className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-4 font-semibold text-slate-700 transition-colors hover:border-cyan-500 hover:text-cyan-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-600"
+              className="inline-flex items-center justify-center gap-3 rounded-full border border-cyan-200 bg-white/80 px-6 py-4 text-sm font-semibold text-cyan-900 transition-colors hover:border-cyan-700 hover:bg-cyan-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-700"
             >
               Explore Services
+              <ArrowUpRight size={18} aria-hidden="true" />
             </motion.a>
           </div>
 
-          <div
-            data-copy-part
-            className="mt-9 flex flex-wrap gap-5 border-t border-slate-200 pt-6"
-          >
-            <div className="flex items-center gap-2">
-              <ShieldCheck
-                size={20}
-                aria-hidden="true"
-                className="text-cyan-600"
-              />
-              <span className="text-sm text-slate-600">
-                Experienced Dentists
-              </span>
-            </div>
+          {/* Care highlights */}
+          <div className="mt-10 flex flex-wrap gap-x-6 gap-y-4 border-t border-cyan-950/10 pt-6">
+            {[
+              "Personalized care",
+              "Experienced dentists",
+              "Modern treatments",
+            ].map((item) => (
+              <div key={item} className="flex items-center gap-2">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cyan-100 text-cyan-800">
+                  <Check size={12} strokeWidth={3} aria-hidden="true" />
+                </span>
 
-            <div className="flex items-center gap-2">
-              <Star
-                size={20}
-                aria-hidden="true"
-                className="fill-yellow-400 text-yellow-400"
-              />
-              <span className="text-sm text-slate-600">5.0 Patient Rating</span>
-            </div>
+                <span className="text-xs font-medium text-slate-600 sm:text-sm">
+                  {item}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Separate wrappers prevent animation conflicts. */}
-        <div
-          data-photo-position
-          className="relative mx-auto w-full max-w-lg [perspective:1200px]"
-        >
-          {/* GSAP controls this wrapper */}
+        {/* Photo composition */}
+        <div className="relative mx-auto w-full max-w-[480px] px-3 pb-10 pt-5 sm:px-5 lg:max-w-none">
+          {/* Decorative rings */}
           <div
-            data-photo-scene
-            className="relative [transform-style:preserve-3d]"
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-8 aspect-square rounded-full border border-cyan-200/80"
+          />
+
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -inset-x-5 top-3 aspect-square rounded-full border border-dashed border-cyan-200/70"
+          />
+
+          {/* Offset frame */}
+          <div
+            aria-hidden="true"
+            className="absolute bottom-12 left-6 right-0 top-6 rotate-[5deg] rounded-[2.5rem] bg-cyan-700/10 sm:rounded-[3rem]"
+          />
+
+          <motion.div
+            animate={
+              reduceMotion
+                ? undefined
+                : {
+                    y: [0, -8, 0],
+                  }
+            }
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="relative"
           >
-            {/* Framer Motion controls this inner wrapper */}
-            <motion.div
-              animate={reduceMotion ? { y: 0 } : { y: [0, -9, 0] }}
-              transition={{
-                duration: 5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="relative overflow-hidden rounded-[2rem] bg-white shadow-2xl shadow-blue-950/20 ring-1 ring-blue-100"
-            >
+            <div className="relative overflow-hidden rounded-[2.5rem] border-[6px] border-white bg-white shadow-2xl shadow-cyan-950/15 sm:rounded-[3rem] sm:border-8">
               <img
-                src="/Tasalphoto.jpeg"
-                alt="Dr. Waris at Dr.Waris Dental & Implant Center"
+                src="/WhatsApp Image 2026-10-20 at 10.44.59 AM.jpeg"
+                alt="Dr. Waris at Dr. Waris Dental and Implant Center"
                 width={600}
                 height={650}
                 fetchPriority="high"
-                className="h-[400px] w-full object-contain sm:h-[500px] lg:h-[min(62svh,570px)]"
+                className="aspect-[4/5] w-full object-contain"
               />
 
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-blue-950/25 via-transparent to-transparent"
+                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-cyan-950/75 via-transparent to-transparent"
               />
 
-              <div
-                data-shine
-                aria-hidden="true"
-                style={{ transform: "translateX(-180%)" }}
-                className="pointer-events-none absolute -inset-y-20 left-0 w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/45 to-transparent blur-md"
-              />
-            </motion.div>
-          </div>
+              <div className="absolute bottom-6 left-6 right-6 text-white sm:bottom-8 sm:left-8">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-cyan-100 sm:text-xs">
+                  Care with confidence
+                </p>
 
-          <div
-            data-appointment-card
-            className="absolute -bottom-5 left-0 z-20 sm:-left-6"
-          >
-            <motion.div
-              whileHover={reduceMotion ? undefined : { y: -6 }}
-              className="flex items-center gap-3 rounded-2xl border border-white bg-white/95 p-4 shadow-xl backdrop-blur-md sm:p-5"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-50">
-                <CalendarDays
-                  size={24}
-                  aria-hidden="true"
-                  className="text-cyan-600"
-                />
-              </div>
-
-              <div>
-                <p className="text-xs text-slate-500">Need an appointment?</p>
-                <p className="font-semibold text-slate-900">
-                  We're here for you
+                <p className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+                  Your smile.
+                  <br />
+                  Our commitment.
                 </p>
               </div>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
 
-          <div
-            data-rating-card
-            className="absolute right-0 top-8 z-20 sm:-right-5"
+          {/* Upper floating badge */}
+          <motion.div
+            whileHover={hover}
+            className="absolute -right-1 top-0 z-10 flex items-center gap-3 rounded-2xl border border-cyan-100 bg-white/95 px-4 py-3 shadow-lg shadow-cyan-950/10 backdrop-blur-md sm:-right-4 sm:top-10 sm:px-5 sm:py-4"
           >
-            <motion.div
-              whileHover={hover}
-              className="rounded-2xl border border-white bg-white/95 px-5 py-4 shadow-xl backdrop-blur-md"
-            >
-              <div aria-hidden="true" className="flex gap-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    size={16}
-                    className="fill-yellow-400 text-yellow-400"
-                  />
-                ))}
-              </div>
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-50 text-cyan-700">
+              <ShieldCheck size={23} aria-hidden="true" />
+            </span>
 
-              <p className="mt-2 text-sm font-semibold text-slate-800">
-                5.0 Rating
+            <div>
+              <p className="text-xs text-slate-500">Thoughtful treatment</p>
+
+              <p className="mt-0.5 text-sm font-bold text-cyan-950">
+                Personalized Care
               </p>
-            </motion.div>
+            </div>
+          </motion.div>
+
+          {/* Appointment card */}
+          <motion.a
+            href="/#contact"
+            whileHover={hover}
+            whileTap={tap}
+            className="absolute bottom-0 left-0 z-10 flex items-center gap-3 rounded-2xl border border-white bg-white/95 p-4 shadow-xl shadow-cyan-950/10 backdrop-blur-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-700 sm:-left-4 sm:gap-4 sm:p-5"
+          >
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-cyan-700 text-white">
+              <CalendarDays size={23} aria-hidden="true" />
+            </span>
+
+            <div>
+              <p className="text-xs text-slate-500">Let’s plan your visit</p>
+
+              <p className="mt-1 text-sm font-bold text-cyan-950 sm:text-base">
+                Your next smile starts here
+              </p>
+            </div>
+
+            <ArrowUpRight
+              size={20}
+              aria-hidden="true"
+              className="ml-1 shrink-0 text-cyan-700"
+            />
+          </motion.a>
+
+          {/* Decorative heart */}
+          <div
+            aria-hidden="true"
+            className="absolute bottom-24 right-0 flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-100 bg-cyan-50 text-cyan-700 shadow-lg shadow-cyan-950/5 sm:-right-5 sm:h-14 sm:w-14"
+          >
+            <Heart size={24} strokeWidth={1.8} />
           </div>
         </div>
 
-        <div
-          data-scroll-hint
-          className="absolute bottom-5 left-1/2 hidden -translate-x-1/2 items-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-slate-500 lg:flex"
+        {/* Scroll link */}
+        <a
+          href="/#services"
+          className="absolute bottom-7 left-8 hidden items-center gap-3 rounded text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-700 lg:inline-flex"
         >
-          Scroll to explore
-          <motion.span
-            aria-hidden="true"
-            animate={reduceMotion ? { y: 0 } : { y: [0, 6, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            <ArrowDown size={16} />
-          </motion.span>
-        </div>
+          <span className="flex h-8 w-8 items-center justify-center rounded-full border border-cyan-200">
+            <ArrowDown size={14} aria-hidden="true" />
+          </span>
+          Discover our care
+        </a>
       </div>
+
+      {/* Bottom edge */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-cyan-300 to-transparent"
+      />
     </section>
   );
 };

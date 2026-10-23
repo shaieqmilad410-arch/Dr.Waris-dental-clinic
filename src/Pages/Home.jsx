@@ -10,12 +10,14 @@ import LocationSection from "../Componants/LocationSection";
 
 import FAQ from "../Componants/FAQ";
 import DeveloperCredit from "../Componants/DeveloperCredit";
+import BeforeAfter from "../Componants/BeforAfter";
 
 const Home = () => {
   return (
     <div>
       <Hero />
       <ServicesSection />
+      <BeforeAfter />
       <AboutSection />
       <ContactSection />
       <TestimonialsSection />

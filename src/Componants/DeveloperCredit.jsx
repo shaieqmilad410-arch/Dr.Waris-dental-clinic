@@ -1,15 +1,11 @@
-import React, { useLayoutEffect, useRef } from "react";
+import React from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   FaWhatsapp,
   FaFacebookF,
   FaInstagram,
   FaEnvelope,
 } from "react-icons/fa";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const socialLinks = [
   {
@@ -39,76 +35,21 @@ const socialLinks = [
 ];
 
 const DeveloperCredit = () => {
-  const creditRef = useRef(null);
   const reduceMotion = useReducedMotion();
 
-  useLayoutEffect(() => {
-    const mm = gsap.matchMedia();
-
-    mm.add(
-      "(prefers-reduced-motion: no-preference)",
-      () => {
-        const q = gsap.utils.selector(creditRef.current);
-
-        gsap
-          .timeline({
-            defaults: {
-              ease: "power3.out",
-            },
-            scrollTrigger: {
-              trigger: creditRef.current,
-              start: "top 98%",
-              once: true,
-            },
-          })
-          .from(q("[data-credit-line]"), {
-            scaleX: 0,
-            transformOrigin: "center",
-            duration: 1,
-          })
-          .from(
-            q("[data-credit-name]"),
-            {
-              autoAlpha: 0,
-              y: 18,
-              duration: 0.7,
-            },
-            0.15,
-          )
-          .from(
-            q("[data-social-reveal]"),
-            {
-              autoAlpha: 0,
-              y: 18,
-              stagger: 0.07,
-              duration: 0.6,
-            },
-            0.25,
-          );
-      },
-      creditRef.current,
-    );
-
-    return () => mm.revert();
-  }, []);
-
   return (
-    <div ref={creditRef} className="relative bg-white">
-      {/* Animated top border */}
-      <div className="absolute inset-x-0 top-0 h-px bg-slate-100">
-        <div
-          data-credit-line
-          aria-hidden="true"
-          className="h-full bg-gradient-to-r from-transparent via-cyan-600/50 to-transparent"
-        />
+    <div className="relative bg-white">
+      {/* Top border */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-px bg-slate-100"
+      >
+        <div className="h-full bg-gradient-to-r from-transparent via-cyan-600/50 to-transparent" />
       </div>
 
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 px-4 py-6 text-center sm:flex-row sm:px-6 sm:text-left lg:px-8">
         {/* Developer credit */}
-        <div
-          data-credit-name
-          className="flex min-w-0 flex-col items-center gap-3 sm:flex-row sm:gap-4"
-        >
+        <div className="flex min-w-0 flex-col items-center gap-3 sm:flex-row sm:gap-4">
           <div
             aria-hidden="true"
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-cyan-100 bg-cyan-50 font-mono text-sm font-bold text-cyan-800"
@@ -146,25 +87,24 @@ const DeveloperCredit = () => {
             const isEmail = social.href.startsWith("mailto:");
 
             return (
-              <div key={social.name} data-social-reveal>
-                <motion.a
-                  href={social.href}
-                  target={isEmail ? undefined : "_blank"}
-                  rel={isEmail ? undefined : "noopener noreferrer"}
-                  aria-label={`${social.name} — Milad Shaieq`}
-                  title={social.name}
-                  whileHover={reduceMotion ? undefined : { y: -4, scale: 1.06 }}
-                  whileTap={reduceMotion ? undefined : { scale: 0.92 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 350,
-                    damping: 22,
-                  }}
-                  className={`flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-700 ${social.hoverClass}`}
-                >
-                  <Icon size={17} aria-hidden="true" />
-                </motion.a>
-              </div>
+              <motion.a
+                key={social.name}
+                href={social.href}
+                target={isEmail ? undefined : "_blank"}
+                rel={isEmail ? undefined : "noopener noreferrer"}
+                aria-label={`${social.name} — Milad Shaieq`}
+                title={social.name}
+                whileHover={reduceMotion ? undefined : { y: -4, scale: 1.06 }}
+                whileTap={reduceMotion ? undefined : { scale: 0.92 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 350,
+                  damping: 22,
+                }}
+                className={`flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-700 ${social.hoverClass}`}
+              >
+                <Icon size={17} aria-hidden="true" />
+              </motion.a>
             );
           })}
         </div>
